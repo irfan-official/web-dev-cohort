@@ -51,7 +51,7 @@ let p2_deep = JSON.parse(JSON.stringify(p1_deep));
 p2_deep.name = "Imran";
 console.log(p1_deep);
 
-// method 3 (normal copy)
+// method 3 (normal refference)
 let p1_ncpy = { name: "Irfan" };
 let p2_ncpy = {
   name: p1_ncpy.name,
