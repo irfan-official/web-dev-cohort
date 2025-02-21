@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cursor Effect</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        background-color: white;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-family: Arial, sans-serif;
+        overflow: hidden;
+        cursor: none; /* Hide the default cursor */
+      }
+
+      .text-container {
+        font-size: 3rem;
+        font-weight: bold;
+        color: black;
+        position: relative;
+        z-index: 1;
+      }
+
+      .circle {
+        position: fixed;
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background-color: red;
+        border: 2px solid black; /* Circle outline with border */
+        pointer-events: none;
+        mix-blend-mode: difference;
+        transition: transform 0.1s ease;
+        z-index: 2;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="text-container">Hover Over This Text</div>
+
+    <div class="circle"></div>
+
+    <script>
+      const circle = document.querySelector(".circle");
+
+      document.addEventListener("mousemove", (e) => {
+        const mouseX = e.clientX;
+        const mouseY = e.clientY;
+
+        // Update circle position
+        circle.style.transform = `translate(${mouseX - 50}px, ${
+          mouseY - 50
+        }px)`;
+      });
+    </script>
+  </body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cursor Effect</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        background-color: white;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-family: Arial, sans-serif;
+        overflow: hidden;
+        cursor: none; /* Hide the default cursor */
+      }
+
+      .text-container {
+        font-size: 3rem;
+        font-weight: bold;
+        color: black;
+        position: relative;
+        z-index: 1;
+      }
+
+      .circle {
+        position: fixed;
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background-color: transparent;
+        border: 2px solid black; /* Circle outline with border */
+        pointer-events: none;
+        mix-blend-mode: difference;
+        transition: transform 0.1s ease;
+        z-index: 2;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="text-container">Hover Over This Text</div>
+
+    <div class="circle"></div>
+
+    <script>
+      const circle = document.querySelector(".circle");
+
+      document.addEventListener("mousemove", (e) => {
+        const mouseX = e.clientX;
+        const mouseY = e.clientY;
+
+        // Update circle position
+        circle.style.transform = `translate(${mouseX - 50}px, ${
+          mouseY - 50
+        }px)`;
+      });
+    </script>
+  </body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cursor Effect</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        background-color: white;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-family: Arial, sans-serif;
+        overflow: hidden;
+        cursor: none; /* Hide the default cursor */
+      }
+
+      .text-container {
+        font-size: 3rem;
+        font-weight: bold;
+        color: black;
+        position: relative;
+        z-index: 1;
+      }
+
+      .circle {
+        position: fixed;
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background-color: transparent;
+        border: 2px solid black; /* Circle outline with border */
+        pointer-events: none;
+        mix-blend-mode: difference;
+        transition: transform 0.1s ease;
+        z-index: 2;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="text-container">Hover Over This Text</div>
+
+    <div class="circle"></div>
+
+    <script>
+      const circle = document.querySelector(".circle");
+
+      document.addEventListener("mousemove", (e) => {
+        const mouseX = e.clientX;
+        const mouseY = e.clientY;
+
+        // Update circle position
+        circle.style.transform = `translate(${mouseX - 50}px, ${
+          mouseY - 50
+        }px)`;
+      });
+    </script>
+  </body>
+</html>

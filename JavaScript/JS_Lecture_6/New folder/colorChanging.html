@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cursor Effect</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        background-color: rgb(255, 255, 255);
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-family: Arial, sans-serif;
+        overflow: hidden;
+        cursor: none; /* Hide the default cursor */
+      }
+
+      .text-container {
+        font-size: 3rem;
+        font-weight: bold;
+        color: black;
+        position: relative;
+        z-index: 1;
+      }
+
+      .circle {
+        position: fixed;
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background-color: rgb(255, 255, 255);
+        border: 10px solid rgb(0, 0, 0); /* Circle outline */
+        pointer-events: none;
+        mix-blend-mode: difference;
+        z-index: 2;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="text-container">Hover Over This Text</div>
+
+    <div class="circle"></div>
+
+    <script>
+      const circle = document.querySelector(".circle");
+
+      document.addEventListener("mousemove", (e) => {
+        const mouseX = e.clientX;
+        const mouseY = e.clientY;
+
+        // Adjust the position so the circle's center aligns with the cursor
+        circle.style.left = `${mouseX - 50}px`; // Half the circle's width
+        circle.style.top = `${mouseY - 50}px`; // Half the circle's height
+      });
+    </script>
+  </body>
+</html>
