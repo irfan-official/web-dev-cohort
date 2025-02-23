@@ -1,15 +1,13 @@
-let userActivity = [
-  { user: "Alice", activityCount: 45 },
-  { user: "Alice", activityCount: 72 },
-  { user: "Alice", activityCount: 33 },
+let movieRating = [
+  { title: "Movie A", ratings: [4, 5, 3] },
+  { title: "Movie B", ratings: [5, 5, 4] },
+  { title: "Movie C", ratings: [3, 4, 2] },
 ];
 
-let mostActiveUser = userActivity.reduce((acc, currnt) => {
-  if (acc.activityCount > currnt.activityCount) {
-    return acc;
-  } else {
-    return currnt;
-  }
-});
+let averageRatings = movieRating.map((movie, movieIndex) => {
+  let totalRating = movie.ratings.reduce((acc, current) => acc + current, 0);
+  let rating = totalRating / movie.ratings.length;
 
-console.log(mostActiveUser);
+  return { title: movie.title, rating: rating.toFixed(2) };
+});
+console.log(averageRatings);
