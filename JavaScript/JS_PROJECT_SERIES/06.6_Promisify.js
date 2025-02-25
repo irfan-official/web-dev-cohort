@@ -69,3 +69,7 @@ function unlinkWithPromise(filepath) {
     fs.unlink();
   });
 }
+
+async function test(params) {
+  await new Promise()
+}
