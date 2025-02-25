@@ -10,9 +10,9 @@
 // .finally() will runn all time and its not depends on fullfill and reject
 // 3 state
 // 3_1 pending
-// 3_2 fullfill
-// 3_3 Reject
-// 3_4 setteled
+// 3_2 fullfill --- then()
+// 3_3 Reject --- catch()
+// 3_4 setteled --- finally()
 // 3_4_1 fullfill setteled
 // 3_4_2 Reject settele
 
@@ -32,3 +32,6 @@ allData.then((data) => console.log("My data is ===== ", data));
 allData.catch((err) => console.log(`Error ==> `, err));
 
 allData.finally(() => console.log("complete"));
+
+// Sync --- Blocking Codinng
+// Async --- Non Blocking Coding
