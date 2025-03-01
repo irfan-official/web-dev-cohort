@@ -31,8 +31,18 @@ function createDebounce(cb, delay = 1) {
 
   return function () {
     clearTimeout(timerId);
-    timerId = setTimeout(cb, delay * 1000);
+    timerId = setTimeout(() => cb(...args), delay * 1000);
   };
 }
 
-//
+// Throttling is use clouser
+function createThrottling(cb, delay = 1) {
+  let timerId = null;
+  return function () {
+    if (timerId === null) {
+      cb(...args);
+      timerId = setTimeout(() => (timerId = null), delay * 1000);
+    }
+    timerId = setTimeout(cb, delay);
+  };
+}
