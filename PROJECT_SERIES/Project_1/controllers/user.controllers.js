@@ -99,7 +99,7 @@ export const verifyUser = async (req, res) => {
     return res.status(200).json({ message: "Invalid token" });
   }
   user.isVarified = true;
-  user.verificationToken = null;
+  user.verificationToken = undefined;
   await user.save();
 
   return res.status(200).json({ data: user });
@@ -284,7 +284,7 @@ export const resetPassword = async (req, res) => {
     // collect password from req.body
     // find the user basis of valid resetPasswordExpires and token
     // update the password and save it
-    
+
     const { token } = req.params;
     const { password } = req.body;
 
@@ -302,8 +302,8 @@ export const resetPassword = async (req, res) => {
     }
 
     user.password = password;
-    user.resetPasswordExpires = null;
-    user.resetPasswordToken = null;
+    user.resetPasswordExpires = undefined;
+    user.resetPasswordToken = undefined;
     await user.save();
 
     return res.status(200).json({

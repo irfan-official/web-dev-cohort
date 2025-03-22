@@ -9,6 +9,7 @@ import {
   resetPassword,
 } from "../controllers/user.controllers.js";
 import { isLoggedIn } from "../middleware/auth.middleware.js";
+
 const router = express.Router();
 
 export default router;
