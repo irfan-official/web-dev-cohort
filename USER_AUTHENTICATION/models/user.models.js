@@ -35,7 +35,7 @@ const userSchema = new mongoose.Schema(
     },
     verificationExpiry: {
       type: Date,
-      default: () => new Date(Date.now() + 60 * 60 * 1000), // 1 hour form creation
+      default: () => new Date(Date.now() + 10 * 60 * 60 * 1000), // 10 hour form creation
     },
     resetPasswordToken: {
       type: String,

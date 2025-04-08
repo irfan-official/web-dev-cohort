@@ -2,7 +2,7 @@ import { config } from "dotenv";
 config();
 import express, { urlencoded } from "express";
 import cors from "cors";
-import db from "./utils/db.connect.js";
+import db from "./utils/dbConnection.utils.js";
 import userRoutes from "./routes/user.routes.js";
 
 const app = express();
