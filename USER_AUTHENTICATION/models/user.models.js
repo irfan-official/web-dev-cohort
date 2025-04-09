@@ -1,4 +1,6 @@
 import mongoose from "mongoose";
+import bcrypt from "bcryptjs";
+
 const userSchema = new mongoose.Schema(
   {
     name: {
@@ -35,7 +37,7 @@ const userSchema = new mongoose.Schema(
     },
     verificationExpiry: {
       type: Date,
-      default: () => new Date(Date.now() + 10 * 60 * 60 * 1000), // 10 hour form creation
+      default: () => new Date(Date.now(0) + 10 * 60 * 60 * 1000), // 10 hour form creation
     },
     resetPasswordToken: {
       type: String,
@@ -48,6 +50,20 @@ const userSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+userSchema.pre("save", async function (next) {
+  if (this.isModified("password")) {
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+
+    next();
+  }
+});
+
+userSchema.methods.comparePassword = async function (password) {
+  // bcrypt.compare() return Boolean value
+  return await bcrypt.compare(password, this.password);
+};
 
 const User = mongoose.model("User", userSchema);
 

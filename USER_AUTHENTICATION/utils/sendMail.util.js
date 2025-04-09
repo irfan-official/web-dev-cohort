@@ -6,12 +6,12 @@ import nodemailer from "nodemailer";
 
 // 1. transport
 
-const sendMail = async (email, token) => {
+const sendMail = async (reciverEmail, token) => {
   try {
     const transporter = nodemailer.createTransport({
       host: process.env.EMAIL_HOST,
       port: process.env.EMAIL_PORT,
-      secure: process.env.EMAIL_PORT === 465, // true for port 465, false for other ports
+      secure: process.env.EMAIL_PORT === "465", // true for port 465, false for other ports
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
@@ -24,10 +24,10 @@ const sendMail = async (email, token) => {
 
     const mailOption = {
       from: process.env.SENDER_MAIL, // sender address
-      to: email, // list of receivers
+      to: reciverEmail, // list of receivers
       subject: "Email verification", // Subject line
       text: verificationUrl, // plain text body
-      html: "<b>Hello world?</b>", // html body
+      html: `<b>${verificationUrl}</b>`, // html body
     };
 
     const info = await transporter.sendMail(mailOption);

@@ -20,8 +20,11 @@ app.use(
 
 app.use("/api/vi/users", userRoutes);
 
+app.route("/").get((req, res) => {
+  return res.status(200).send("<h1>wellcome</h1>");
+});
+
 app.listen(port, () => {
   db();
   console.log(`app started at http://localhost:${port}`);
 });
-
