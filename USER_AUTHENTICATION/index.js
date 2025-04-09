@@ -4,10 +4,12 @@ import express, { urlencoded } from "express";
 import cors from "cors";
 import db from "./utils/dbConnection.utils.js";
 import userRoutes from "./routes/user.routes.js";
+import cookieParser from "cookie-parser";
 
 const app = express();
 const port = process.env.PORT || 4000;
 
+app.use(cookieParser());
 app.use(express.json());
 app.use(urlencoded({ extended: true }));
 app.use(

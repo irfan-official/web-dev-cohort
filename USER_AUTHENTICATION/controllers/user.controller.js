@@ -2,6 +2,9 @@
 import User from "../models/user.models.js";
 import crypto from "crypto";
 import sendMail from "../utils/sendMail.util.js";
+import genJWT from "../utils/jwt.utils.js";
+import assignCookies from "../utils/cookies.utils.js";
+import jwt from "jsonwebtoken";
 
 export const register = async (req, res) => {
   // 1. get user data from req body
@@ -48,7 +51,13 @@ export const register = async (req, res) => {
 
     await createdUser.save();
 
-    await sendMail(createdUser.email, createdUser.verificationToken);
+    const message = "Email verification link => ";
+
+    await sendMail(createdUser.email, createdUser.verificationToken, message);
+
+    // assign jwt token in cookies
+    const jwtToken = genJWT(res, createdUser);
+    assignCookies(res, jwtToken);
 
     return res.status(201).json({
       success: true,
@@ -56,7 +65,63 @@ export const register = async (req, res) => {
       data: createdUser,
     });
   } catch (error) {
+    console.log("Register controller error = ", error.message);
     return res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+};
+
+export const login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(404).json({
+        success: false,
+        message: "email and password required",
+      });
+    }
+    if (password.length < 6) {
+      return res.status(404).json({
+        success: false,
+        message: "password must be 6 degit",
+      });
+    }
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "invalid user",
+      });
+    }
+
+    if (!(await user.comparePassword(password))) {
+      return res.status(404).json({
+        success: false,
+        message: "invalid email or password",
+      });
+    }
+
+    if (!user.isVerified) {
+      return res.status(404).json({
+        success: false,
+        message: "please verify your email",
+      });
+    }
+
+    // assign jwt token in cookies
+
+    const jwtToken = genJWT(res, user);
+    assignCookies(res, jwtToken);
+
+    return res.status(200).redirect("/");
+  } catch (error) {
+    console.log("Login controller error: ", error.message);
+    return res.status(404).json({
       success: false,
       error: error.message,
     });
@@ -107,84 +172,86 @@ export const emailVerify = async (req, res) => {
   }
 };
 
-export const login = async (req, res) => {
+// please change from here
+export const forgetPassword = async (req, res) => {
+  // gennerate a hash and send to user email
+
   try {
-    const { email, password } = req.body;
+    const resetPasswordToken = crypto.randomBytes(32).toString("hex");
 
-    if (!email || !password) {
-      return res.status(404).json({
-        success: false,
-        message: "email and password required",
-      });
-    }
-    if (password.length < 6) {
-      return res.status(404).json({
-        success: false,
-        message: "password must be 6 degit",
-      });
-    }
+    const token = req.cookies.jwtToken;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ _id: decoded.id });
 
     if (!user) {
-      return res.status(404).json({
+      return res.status(400).json({
         success: false,
-        message: "invalid user",
+        message: "not valid user",
       });
     }
 
-    if (!(await user.comparePassword(password))) {
-      return res.status(404).json({
+    user.resetPasswordToken = resetPasswordToken;
+    user.resetPasswordExpires = new Date(Date.now(0) + 10 * 60 * 60 * 1000); // 10 hours
+
+    const message = "Your reset password link is => ";
+
+    const check = await sendMail(user.email, resetPasswordToken, message);
+
+    if (!check) {
+      return res.status(500).json({
         success: false,
-        message: "invalid email or password",
+        message: "Email sent fails",
       });
     }
 
-    if (!user.isVerified) {
-      return res.status(404).json({
-        success: false,
-        message: "please verify your email",
-      });
-    }
+    await user.save();
 
-    // assign jwt token
-
-    const jwtOptions = {
-      expiresIn: "1d", // Token will expire in 1 day
-      algorithm: "HS256", // Default, but you can specify it explicitly
-      issuer: "irfans.dev", // Optional: who issued the token (your app/domain)
-      audience: "users", // Optional: intended audience
-    };
-
-    const payload = { id: user._id };
-
-    const jwtToken = jwt.sign(payload, process.env.JWT_SECRET, jwtOptions);
-
-    res.cookies("jwtToken", jwtToken);
-
-    return res.status(200).redirect("/");
+    return res.status(500).json({
+      success: true,
+      message: "reset password link sent to your mail, Check your email",
+    });
   } catch (error) {
-    console.log("Login controller error: ", error.message);
-    return res.status(404).json({
+    return res.status(500).json({
       success: false,
-      error: error.message,
+      message: error.message,
     });
   }
 };
 
-export const forgetPassword = async (req, res) => {
+export const verify_resetPassword_link = async (req, res) => {
   // gennerate a hash and send to user email
 
-  const resetPasswordToken = crypto.randomBytes(32).toString("hex");
+  const { token } = req.params;
 
-  const user = await findOne({ email });
+  if (!token) {
+    return res.status(404).json({
+      success: false,
+      message: "not valid token",
+    });
+  }
 
-  user.resetPasswordToken = resetPasswordToken;
-  user.resetPasswordExpires = new Date.now(0);
+  const user = await User.findOne({
+    resetPasswordToken: token,
+    resetPasswordExpires: { $gt: Date.now() },
+  });
+
+  if (!user) {
+    return res.status(404).json({
+      success: false,
+      message: "not valid user",
+    });
+  }
+
+  user.resetPasswordExpires = undefined;
+  user.resetPasswordToken = undefined;
 
   await user.save();
+
+  return res.status(201).json({
+    success: true,
+    message: "Your password reset successfully",
+  });
 };
 
-export const change_password_with_link = async (req, res) => {
-  // gennerate a hash and send to user email
-};
+export const change_password_with_link = async (req, res) => {};

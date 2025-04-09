@@ -6,7 +6,7 @@ import nodemailer from "nodemailer";
 
 // 1. transport
 
-const sendMail = async (reciverEmail, token) => {
+const sendMail = async (reciverEmail, token, message = "") => {
   try {
     const transporter = nodemailer.createTransport({
       host: process.env.EMAIL_HOST,
@@ -26,8 +26,8 @@ const sendMail = async (reciverEmail, token) => {
       from: process.env.SENDER_MAIL, // sender address
       to: reciverEmail, // list of receivers
       subject: "Email verification", // Subject line
-      text: verificationUrl, // plain text body
-      html: `<b>${verificationUrl}</b>`, // html body
+      text: `${message} ${verificationUrl}`, // plain text body
+      html: `<b>${message} ${verificationUrl}</b>`, // html body
     };
 
     const info = await transporter.sendMail(mailOption);
