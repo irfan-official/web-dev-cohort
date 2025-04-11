@@ -3,8 +3,8 @@ import User from "../models/user.models.js";
 import crypto from "crypto";
 import sendMail from "../utils/sendMail.util.js";
 import genJWT from "../utils/jwt.utils.js";
-import assignCookies from "../utils/cookies.utils.js";
 import jwt from "jsonwebtoken";
+import assignCookies, { deleteCookiesOptions } from "../utils/cookies.utils.js";
 
 export const register = async (req, res) => {
   // 1. get user data from req body
@@ -56,8 +56,31 @@ export const register = async (req, res) => {
     await sendMail(createdUser.email, createdUser.verificationToken, message);
 
     // assign jwt token in cookies
-    const jwtToken = genJWT(res, createdUser);
-    assignCookies(res, jwtToken);
+    const accessToken = genJWT(
+      res,
+      createdUser._id,
+      process.env.JWT_ACCESS_TOKEN_SECRET_KEY,
+      process.env.JWT_ACCESS_TOKEN_EXPIRE
+    );
+    const refreshToken = genJWT(
+      res,
+      createdUser._id,
+      process.env.JWT_REFRESH_TOKEN_SECRET_KEY,
+      process.env.JWT_REFRESH_TOKEN_EXPIRE
+    );
+
+    assignCookies(
+      res,
+      "access_token",
+      accessToken,
+      process.env.JWT_ACCESS_TOKEN_EXPIRE
+    );
+    assignCookies(
+      res,
+      "refresh_token",
+      refreshToken,
+      process.env.JWT_REFRESH_TOKEN_EXPIRE
+    );
 
     return res.status(201).json({
       success: true,
@@ -115,12 +138,36 @@ export const login = async (req, res) => {
 
     // assign jwt token in cookies
 
-    const jwtToken = genJWT(res, user);
-    assignCookies(res, jwtToken);
+    const accessToken = genJWT(
+      res,
+      user._id,
+      process.env.JWT_ACCESS_TOKEN_SECRET_KEY,
+      process.env.JWT_ACCESS_TOKEN_EXPIRE
+    );
+    const refreshToken = genJWT(
+      res,
+      user._id,
+      process.env.JWT_REFRESH_TOKEN_SECRET_KEY,
+      process.env.JWT_REFRESH_TOKEN_EXPIRE
+    );
+
+    assignCookies(
+      res,
+      "access_token",
+      accessToken,
+      process.env.JWT_ACCESS_TOKEN_EXPIRE
+    );
+    assignCookies(
+      res,
+      "refresh_token",
+      refreshToken,
+      process.env.JWT_REFRESH_TOKEN_EXPIRE
+    );
 
     return res.status(200).redirect("/");
   } catch (error) {
     console.log("Login controller error: ", error.message);
+
     return res.status(404).json({
       success: false,
       error: error.message,
@@ -196,6 +243,18 @@ export const getProfile = async (req, res) => {
       message: "Internal server error",
     });
   }
+};
+
+export const logOut = async (req, res) => {
+  // 1. remove the accessToken and refresh token
+
+  res.clearCookie("access_token", deleteCookiesOptions);
+  res.clearCookie("refresh_token", deleteCookiesOptions);
+
+  return res.status(200).json({
+    success: true,
+    message: "Logout successfully",
+  });
 };
 
 // please change from here
