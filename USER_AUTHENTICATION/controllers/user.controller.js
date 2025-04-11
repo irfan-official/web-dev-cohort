@@ -172,6 +172,32 @@ export const emailVerify = async (req, res) => {
   }
 };
 
+export const getProfile = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const user = await User.findById(userId).select("-password");
+
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: "login first",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "user data",
+      data: user,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
+
 // please change from here
 export const forgetPassword = async (req, res) => {
   // gennerate a hash and send to user email
